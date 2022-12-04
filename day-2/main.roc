@@ -1,4 +1,4 @@
-app "hello"
+app "day 2"
     packages { pf: "https://github.com/roc-lang/basic-cli/releases/download/0.1.1/zAoiC9xtQPHywYk350_b7ust04BmWLW00sjb9ZPtSQk.tar.br" }
     # imports [pf.Stdout, pf.Stdin , pf.Task.{await}]
     imports [pf.Stdout, pf.File, pf.Task.{await}, pf.Path ]
@@ -15,7 +15,15 @@ main =
               |> List.sum
               |> Num.toStr
 
-    Stdout.line "total points: \(points)"
+    _ <- await (Stdout.line "total points: \(points)")
+
+    points2 = Str.split  contents "\n"
+              |> List.map \input -> (pointsForGame2 input)
+              |> List.sum
+              |> Num.toStr
+
+    Stdout.line "total points: \(points2)"
+
 
 pointsForGame : Str -> Nat
 pointsForGame = \input ->
@@ -32,6 +40,23 @@ pointsForGame = \input ->
     "C Y" -> 0 # LOSE scissors > paper
     "C Z" -> 3 # TIE  scissors = scissors
     _ -> 0
+
+pointsForGame2 : Str -> Nat
+pointsForGame2 = \input ->
+   when input is
+    "A X" -> 0 + 3 # rock lose -> scissors
+    "A Y" -> 3 + 1 # rock draw -> rock
+    "A Z" -> 6 + 2 # rock win -> paper
+
+    "B X" -> 0 + 1 # paper lose -> rock
+    "B Y" -> 3 + 2 # paper draw -> paper
+    "B Z" -> 6 + 3 # paper win -> scissors
+
+    "C X" -> 0 + 2 # scissors lose -> paper
+    "C Y" -> 3 + 3 # scissors draw -> scissors
+    "C Z" -> 6 + 1 # scissors win -> rock
+    _ -> 0
+
 
 
 pointsForThrow : Str -> Nat
