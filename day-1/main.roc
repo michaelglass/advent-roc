@@ -1,4 +1,4 @@
-app "hello"
+app "day 1"
     packages { pf: "https://github.com/roc-lang/basic-cli/releases/download/0.1.1/zAoiC9xtQPHywYk350_b7ust04BmWLW00sjb9ZPtSQk.tar.br" }
     # imports [pf.Stdout, pf.Stdin , pf.Task.{await}]
     imports [pf.Stdout, pf.File, pf.Task.{await}, pf.Path ]
@@ -24,7 +24,18 @@ main =
       |> Result.withDefault 0
       |> Num.toStr
 
-    Stdout.line "max calories: \(maxCalories)"
+    _ <- Stdout.line "max calories: \(maxCalories)"
+      |> await
+
+
+    max3Calories = List.map elves List.sum
+      |> List.sortDesc
+      |> List.takeFirst 3
+      |> List.sum
+      |> Num.toStr
+
+    Stdout.line "max 3: \(max3Calories)"
+
 
 
 # main =
