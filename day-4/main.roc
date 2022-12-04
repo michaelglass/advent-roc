@@ -1,4 +1,4 @@
-app "hello"
+app "day 4"
     packages { pf: "https://github.com/roc-lang/basic-cli/releases/download/0.1.1/zAoiC9xtQPHywYk350_b7ust04BmWLW00sjb9ZPtSQk.tar.br" }
     # imports [pf.Stdout, pf.Stdin , pf.Task.{await}]
     imports [pf.Stdout, pf.File, pf.Task.{await}, pf.Path ]
@@ -16,7 +16,12 @@ main =
     numUnnecessary = List.countIf pairs rangeUnnecessary
       |> Num.toStr
 
-    Stdout.line "num fully included: \(numUnnecessary)"
+    _ <- await (Stdout.line "num fully included: \(numUnnecessary)")
+
+    numInnefficient = List.countIf pairs rangeInnefficient
+      |> Num.toStr
+
+    Stdout.line "num partially included: \(numInnefficient)"
 
 RangePair : { first: ElfRange, second: ElfRange }
 ElfRange : {start: Nat, end: Nat}
@@ -40,3 +45,12 @@ rangeUnnecessary = \pair ->
 rangeUnnecessaryP : ElfRange, ElfRange -> Bool
 rangeUnnecessaryP = \first, second ->
   first.start <= second.start && first.end >= second.end
+
+# this is inefficient but also ... I don't care
+rangeInnefficient : RangePair -> Bool
+rangeInnefficient = \{first, second}->
+  numOverlapping = Set.fromList (List.range first.start (first.end + 1)) # note roc documentation says ends are included but in roc repl they're not
+    |> Set.intersection (Set.fromList (List.range second.start (second.end + 1)))
+    |> Set.len
+
+  numOverlapping != 0
