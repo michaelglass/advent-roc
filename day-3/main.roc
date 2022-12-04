@@ -1,4 +1,4 @@
-app "hello"
+app "day 3"
     packages { pf: "https://github.com/roc-lang/basic-cli/releases/download/0.1.1/zAoiC9xtQPHywYk350_b7ust04BmWLW00sjb9ZPtSQk.tar.br" }
     # imports [pf.Stdout, pf.Stdin , pf.Task.{await}]
     imports [pf.Stdout, pf.File, pf.Task.{await}, pf.Path ]
@@ -16,8 +16,36 @@ main =
       |> List.sum
       |> Num.toStr
 
-    Stdout.line "priority: \(priority)"
+    _ <- await (Stdout.line "priority: \(priority)")
 
+    badgePrioritySum = Str.split contents "\n"
+      |>triads
+      |> List.map sharedBadgePoints
+      |> List.sum
+      |> Num.toStr
+
+    Stdout.line "badge priority: \(badgePrioritySum)"
+
+
+
+Triad : {a: Str, b: Str, c: Str}
+
+triads : List Str -> List Triad
+triads = \lines  ->
+  split = List.split lines 3
+  when split.before is
+    [a, b, c] -> List.append (triads split.others) {a, b, c}
+    _ -> []
+
+sharedBadgePoints : Triad -> Nat
+sharedBadgePoints = \{a, b, c} ->
+  Str.graphemes a
+    |> Set.fromList
+    |> Set.intersection (Set.fromList (Str.graphemes b))
+    |> Set.intersection (Set.fromList (Str.graphemes c))
+    |> Set.toList
+    |> List.map pointsPerGrapheme
+    |> List.sum
 
 sharedGrapheme : Str -> Result Str [ListWasEmpty]
 sharedGrapheme = \rucksack ->
